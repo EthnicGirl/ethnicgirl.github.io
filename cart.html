@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Shopping Cart | Ethnicgirl</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #faf7f5;
+            color: #222;
+        }
+
+        header {
+            background: white;
+            border-bottom: 1px solid #eee;
+            padding: 18px 20px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 25px 15px;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: #555;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .cart-item img {
+            width: 110px;
+            height: 130px;
+            object-fit: cover;
+            border-radius: 7px;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-info h3 {
+            margin: 0 0 8px;
+            font-size: 18px;
+        }
+
+        .item-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .quantity {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .quantity button {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #aaa;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .remove {
+            color: #c00;
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .summary {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 25px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+
+        .total {
+            font-size: 22px;
+            font-weight: bold;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .checkout {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            margin-top: 20px;
+
+            background: #25D366;
+            color: white;
+
+            border: none;
+            border-radius: 7px;
+
+            font-size: 18px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .empty {
+            background: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        .shop-button {
+            display: inline-block;
+            background: #222;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+
+        footer {
+            background: #222;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 600px) {
+
+            .cart-item {
+                align-items: flex-start;
+            }
+
+            .cart-item img {
+                width: 90px;
+                height: 110px;
+            }
+
+            .item-info h3 {
+                font-size: 15px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        ETHNICGIRL
+    </div>
+
+</header>
+
+
+<div class="container">
+
+    <a class="back" href="index.html">
+        ← Continue Shopping
+    </a>
+
+    <h2>
+        🛒 Your Cart
+    </h2>
+
+    <div id="cartContainer"></div>
+
+</div>
+
+
+<footer>
+
+    <strong>ETHNICGIRL</strong>
+
+    <p>Girls Ethnic Fashion</p>
+
+</footer>
+
+
+<script>
+
+    let cart =
+        JSON.parse(localStorage.getItem("ethnicgirlCart")) || [];
+
+
+    function displayCart() {
+
+        const container =
+            document.getElementById("cartContainer");
+
+        if (cart.length === 0) {
+
+            container.innerHTML = `
+                <div class="empty">
+
+                    <h3>Your cart is empty</h3>
+
+                    <p>
+                        Add some beautiful products to your cart.
+                    </p>
+
+                    <a
+                        class="shop-button"
+                        href="index.html">
+
+                        Continue Shopping
+
+                    </a>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        let html = "";
+
+        let total = 0;
+
+
+        cart.forEach(function(item, index) {
+
+            let itemTotal =
+                item.price * item.quantity;
+
+            total += itemTotal;
+
+
+            html += `
+
+                <div class="cart-item">
+
+                    <img
+                        src="${item.image}"
+                        alt="${item.name}">
+
+                    <div class="item-info">
+
+                        <h3>
+                            ${item.name}
+                        </h3>
+
+                        <p>
+                            Price: ₹${item.price}
+                        </p>
+
+                        <p>
+                            Size: ${item.size}
+                        </p>
+
+
+                        <div class="quantity">
+
+                            <button
+                                onclick="changeQuantity(${index}, -1)">
+                                −
+                            </button>
+
+                            <strong>
+                                ${item.quantity}
+                            </strong>
+
+                            <button
+                                onclick="changeQuantity(${index}, 1)">
+                                +
+                            </button>
+
+                        </div>
+
+
+                        <button
+                            class="remove"
+                            onclick="removeItem(${index})">
+
+                            Remove
+
+                        </button>
+
+                    </div>
+
+                </div>
+            `;
+        });
+
+
+        html += `
+
+            <div class="summary">
+
+                <div class="summary-row">
+
+                    <span>
+                        Items
+                    </span>
+
+                    <strong>
+                        ${getTotalItems()}
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-row total">
+
+                    <span>
+                        Total
+                    </span>
+
+                    <strong>
+                        ₹${total}
+                    </strong>
+
+                </div>
+
+
+                <button
+                    class="checkout"
+                    onclick="checkoutWhatsApp()">
+
+                    📱 CHECKOUT ON WHATSAPP
+
+                </button>
+
+            </div>
+        `;
+
+
+        container.innerHTML = html;
+
+    }
+
+
+    function getTotalItems() {
+
+        let count = 0;
+
+        cart.forEach(function(item) {
+
+            count += item.quantity;
+
+        });
+
+        return count;
+
+    }
+
+
+    function changeQuantity(index, change) {
+
+        cart[index].quantity += change;
+
+
+        if (cart[index].quantity <= 0) {
+
+            cart.splice(index, 1);
+
+        }
+
+
+        localStorage.setItem(
+            "ethnicgirlCart",
+            JSON.stringify(cart)
+        );
+
+
+        displayCart();
+
+    }
+
+
+    function removeItem(index) {
+
+        cart.splice(index, 1);
+
+
+        localStorage.setItem(
+            "ethnicgirlCart",
+            JSON.stringify(cart)
+        );
+
+
+        displayCart();
+
+    }
+
+
+    function checkoutWhatsApp() {
+
+        if (cart.length === 0) {
+
+            alert("Your cart is empty.");
+
+            return;
+
+        }
+
+
+        let message =
+            "Hello Ethnicgirl,%0A%0A" +
+            "I want to place an order:%0A%0A";
+
+
+        let total = 0;
+
+
+        cart.forEach(function(item) {
+
+            let itemTotal =
+                item.price * item.quantity;
+
+            total += itemTotal;
+
+
+            message +=
+                "Product: " + item.name +
+                "%0A" +
+
+                "Size: " + item.size +
+                "%0A" +
+
+                "Quantity: " + item.quantity +
+                "%0A" +
+
+                "Price: ₹" + item.price +
+                "%0A%0A";
+
+        });
+
+
+        message +=
+            "Total: ₹" + total +
+            "%0A%0A" +
+
+            "Please confirm availability and delivery details.";
+
+
+        let whatsappNumber =
+            "917878782128";
+
+
+        let url =
+            "https://wa.me/" +
+            whatsappNumber +
+            "?text=" +
+            message;
+
+
+        window.open(url, "_blank");
+
+    }
+
+
+    displayCart();
+
+</script>
+
+
+</body>
+
+</html>
