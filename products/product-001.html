@@ -506,24 +506,74 @@
     }
 
 
-    function addToCart() {
+   function addToCart() {
 
-        if (selectedSize === "") {
+    if (selectedSize === "") {
 
-            alert("Please select a size first.");
+        alert("Please select a size first.");
 
-            return;
-
-        }
-
-        alert(
-            "Added to cart!\n\n" +
-            "Girls Ethnic Kurta Set With Dupatta\n" +
-            "Size: " + selectedSize + "\n" +
-            "Quantity: " + quantity
-        );
+        return;
 
     }
+
+
+    let cart =
+        JSON.parse(localStorage.getItem("ethnicgirlCart")) || [];
+
+
+    let product = {
+
+        id: "EG001",
+
+        name: "Girls Ethnic Kurta Set With Dupatta",
+
+        price: 999,
+
+        size: selectedSize,
+
+        quantity: quantity,
+
+        image: "../images/products/product-001/main.png"
+
+    };
+
+
+    let existingItem = cart.find(function(item) {
+
+        return (
+            item.id === product.id &&
+            item.size === product.size
+        );
+
+    });
+
+
+    if (existingItem) {
+
+        existingItem.quantity += quantity;
+
+    } else {
+
+        cart.push(product);
+
+    }
+
+
+    localStorage.setItem(
+        "ethnicgirlCart",
+        JSON.stringify(cart)
+    );
+
+
+    alert(
+        "Product added to cart successfully!"
+    );
+
+
+    window.location.href =
+        "../cart.html";
+
+}
 
 
     function orderWhatsApp(event) {
