@@ -423,6 +423,27 @@
         font-size: 18px;
     }
 }
+    .product-search {
+    max-width: 600px;
+    margin: 0 auto 30px;
+    padding: 0 15px;
+}
+
+.product-search input {
+    width: 100%;
+    padding: 15px 18px;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    font-size: 16px;
+    outline: none;
+    background: white;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+}
+
+.product-search input:focus {
+    border-color: #888;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+}
     </style>
     
 
@@ -594,6 +615,14 @@
     class="section"
     id="products">
 
+    <div class="product-search">
+    <input
+        type="text"
+        id="productSearch"
+        placeholder="🔍 Search products..."
+        onkeyup="searchProducts()">
+</div>
+    
     <h2 class="section-title">
         Featured Product
     </h2>
@@ -716,6 +745,26 @@
 </footer>
 
 
+<script>
+function searchProducts() {
+    let searchText = document
+        .getElementById("productSearch")
+        .value
+        .toLowerCase();
+
+    let products = document.querySelectorAll(".product-card");
+
+    products.forEach(function(product) {
+        let productText = product.innerText.toLowerCase();
+
+        if (productText.includes(searchText)) {
+            product.style.display = "";
+        } else {
+            product.style.display = "none";
+        }
+    });
+}
+</script>
 </body>
 
 </html>
