@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Product | Ethnicgirl</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #faf7f5;
+    color: #222;
+}
+
+header {
+    background: white;
+    border-bottom: 1px solid #eee;
+    padding: 18px 5%;
+}
+
+header a {
+    color: #222;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.product-page {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 20px;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 45px;
+
+    background: white;
+    border-radius: 16px;
+
+    box-shadow: 0 5px 25px rgba(0,0,0,0.07);
+}
+
+.main-image {
+    width: 100%;
+    max-height: 650px;
+    object-fit: contain;
+    border-radius: 12px;
+    background: #f7f7f7;
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.thumb {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.thumb.active {
+    border-color: #222;
+}
+
+h1 {
+    font-size: 30px;
+    line-height: 1.25;
+    margin-top: 0;
+}
+
+.price {
+    font-size: 26px;
+    font-weight: bold;
+    margin: 18px 0;
+}
+
+.label {
+    font-weight: bold;
+    margin: 20px 0 10px;
+}
+
+.sizes {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.size-button {
+    padding: 11px 20px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.size-button.selected {
+    background: #222;
+    color: white;
+    border-color: #222;
+}
+
+.quantity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.quantity button {
+    width: 38px;
+    height: 38px;
+    border: 1px solid #ccc;
+    background: white;
+    border-radius: 6px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#quantityValue {
+    font-weight: bold;
+    min-width: 25px;
+    text-align: center;
+}
+
+.action {
+    width: 100%;
+    padding: 14px;
+    margin-top: 12px;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.cart-button {
+    background: #222;
+    color: white;
+}
+
+.whatsapp-button {
+    background: #25D366;
+    color: white;
+}
+
+.error {
+    max-width: 700px;
+    margin: 80px auto;
+    padding: 30px;
+    text-align: center;
+    background: white;
+    border-radius: 12px;
+}
+
+@media (max-width: 750px) {
+
+    .product-page {
+        grid-template-columns: 1fr;
+        margin: 20px 12px;
+        padding: 15px;
+        gap: 25px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .main-image {
+        max-height: 500px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<a href="index.html">
+← Back to Ethnicgirl
+</a>
+
+</header>
+
+
+<div id="productContainer"></div>
+
+
+<script src="products.js"></script>
+
+
+<script>
+
+const productId =
+    new URLSearchParams(window.location.search).get("id");
+
+
+const product =
+    PRODUCTS.find(function(item) {
+
+        return item.id === productId;
+
+    });
+
+
+const container =
+    document.getElementById("productContainer");
+
+
+let selectedSize = "";
+
+let quantity = 1;
+
+
+if (!product) {
+
+    container.innerHTML = `
+
+        <div class="error">
+
+            <h2>Product not found</h2>
+
+            <p>
+                Please return to the homepage
+                and select a product.
+            </p>
+
+            <a href="index.html">
+                Go to Homepage
+            </a>
+
+        </div>
+
+    `;
+
+} else {
+
+    document.title =
+        product.name + " | Ethnicgirl";
+
+
+    container.innerHTML = `
+
+        <main class="product-page">
+
+
+            <div>
+
+                <img
+                    id="mainImage"
+                    class="main-image"
+                    src="${product.images.main}"
+                    alt="${product.name}"
+                >
+
+
+                <div class="gallery">
+
+
+                    <img
+                        class="thumb active"
+                        src="${product.images.main}"
+                        onclick="changeImage(this)"
+                    >
+
+
+                    <img
+                        class="thumb"
+                        src="${product.images.front}"
+                        onclick="changeImage(this)"
+                    >
+
+
+                    <img
+                        class="thumb"
+                        src="${product.images.back}"
+                        onclick="changeImage(this)"
+                    >
+
+
+                    <img
+                        class="thumb"
+                        src="${product.images.side}"
+                        onclick="changeImage(this)"
+                    >
+
+
+                </div>
+
+            </div>
+
+
+
+            <div>
+
+
+                <h1>
+                    ${product.name}
+                </h1>
+
+
+                <div class="price">
+
+                    ₹${product.price}
+
+                </div>
+
+
+                <p>
+
+                    ${product.description}
+
+                </p>
+
+
+                <p>
+
+                    <strong>Fabric:</strong>
+                    ${product.fabric}
+
+                </p>
+
+
+                <p>
+
+                    <strong>Product Code:</strong>
+                    ${product.id}
+
+                </p>
+
+
+
+                <div class="label">
+
+                    Select Size
+
+                </div>
+
+
+                <div class="sizes">
+
+                    ${product.sizes.map(function(size) {
+
+                        return `
+
+                            <button
+                                class="size-button"
+                                onclick="selectSize('${size}', this)"
+                            >
+
+                                ${size}
+
+                            </button>
+
+                        `;
+
+                    }).join("")}
+
+                </div>
+
+
+
+                <div class="label">
+
+                    Quantity
+
+                </div>
+
+
+                <div class="quantity">
+
+                    <button
+                        onclick="changeQuantity(-1)"
+                    >
+
+                        −
+
+                    </button>
+
+
+                    <span id="quantityValue">
+
+                        1
+
+                    </span>
+
+
+                    <button
+                        onclick="changeQuantity(1)"
+                    >
+
+                        +
+
+                    </button>
+
+                </div>
+
+
+
+                <a
+                    href="size-chart.html"
+                    style="
+                        display:inline-block;
+                        margin-top:18px;
+                        color:#222;
+                        font-weight:bold;
+                    "
+                >
+
+                    📏 VIEW SIZE GUIDE
+
+                </a>
+
+
+
+                <button
+                    class="action cart-button"
+                    onclick="addToCart()"
+                >
+
+                    🛒 ADD TO CART
+
+                </button>
+
+
+
+                <button
+                    class="action whatsapp-button"
+                    onclick="whatsappOrder()"
+                >
+
+                    💬 ORDER ON WHATSAPP
+
+                </button>
+
+
+            </div>
+
+
+        </main>
+
+    `;
+
+}
+
+
+
+function selectSize(size, button) {
+
+    selectedSize = size;
+
+
+    document
+        .querySelectorAll(".size-button")
+        .forEach(function(btn) {
+
+            btn.classList.remove("selected");
+
+        });
+
+
+    button.classList.add("selected");
+
+}
+
+
+
+function changeQuantity(amount) {
+
+    quantity += amount;
+
+
+    if (quantity < 1) {
+
+        quantity = 1;
+
+    }
+
+
+    document
+        .getElementById("quantityValue")
+        .textContent = quantity;
+
+}
+
+
+
+function changeImage(image) {
+
+    document
+        .getElementById("mainImage")
+        .src = image.src;
+
+
+    document
+        .querySelectorAll(".thumb")
+        .forEach(function(thumb) {
+
+            thumb.classList.remove("active");
+
+        });
+
+
+    image.classList.add("active");
+
+}
+
+
+
+function addToCart() {
+
+    if (selectedSize === "") {
+
+        alert("Please select a size first.");
+
+        return;
+
+    }
+
+
+    let cart =
+        JSON.parse(
+            localStorage.getItem("ethnicgirlCart")
+        ) || [];
+
+
+    let productItem = {
+
+        id: product.id,
+
+        name: product.name,
+
+        price: product.price,
+
+        size: selectedSize,
+
+        quantity: quantity,
+
+        image: product.images.main
+
+    };
+
+
+    let existingItem =
+        cart.find(function(item) {
+
+            return (
+                item.id === productItem.id &&
+                item.size === productItem.size
+            );
+
+        });
+
+
+    if (existingItem) {
+
+        existingItem.quantity += quantity;
+
+    } else {
+
+        cart.push(productItem);
+
+    }
+
+
+    localStorage.setItem(
+        "ethnicgirlCart",
+        JSON.stringify(cart)
+    );
+
+
+    alert(
+        "Product added to cart successfully!"
+    );
+
+
+    window.location.href = "cart.html";
+
+}
+
+
+
+function whatsappOrder() {
+
+    if (selectedSize === "") {
+
+        alert("Please select a size first.");
+
+        return;
+
+    }
+
+
+    const message =
+
+        "Hello Ethnicgirl,%0A%0A" +
+
+        "I want to order:%0A" +
+
+        product.name +
+
+        "%0AProduct Code: " +
+
+        product.id +
+
+        "%0ASize: " +
+
+        selectedSize +
+
+        "%0AQuantity: " +
+
+        quantity +
+
+        "%0APrice: ₹" +
+
+        product.price +
+
+        "%0A%0APlease confirm my order.";
+
+
+    window.open(
+
+        "https://wa.me/917878782128?text=" +
+
+        message,
+
+        "_blank"
+
+    );
+
+}
+
+</script>
+
+
+</body>
+
+</html>
