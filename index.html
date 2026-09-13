@@ -444,6 +444,53 @@
     border-color: #888;
     box-shadow: 0 4px 16px rgba(0,0,0,0.10);
 }
+    /* CATEGORY FILTERS */
+
+.category-filters {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0 auto 28px;
+    padding: 0 15px;
+}
+
+.filter-button {
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    background: white;
+    color: #222;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.filter-button:hover {
+    background: #f3f3f3;
+}
+
+.filter-button.active {
+    background: #222;
+    color: white;
+    border-color: #222;
+}
+
+.product-card.hidden {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .category-filters {
+        gap: 8px;
+    }
+
+    .filter-button {
+        padding: 9px 14px;
+        font-size: 13px;
+    }
+}
     </style>
     
 
@@ -626,6 +673,25 @@
     <h2 class="section-title">
         Featured Product
     </h2>
+    <div class="category-filters">
+
+    <button class="filter-button active" onclick="filterProducts('all', this)">
+        All
+    </button>
+
+    <button class="filter-button" onclick="filterProducts('ethnic', this)">
+        👗 Ethnic Wear
+    </button>
+
+    <button class="filter-button" onclick="filterProducts('kurta', this)">
+        👚 Kurtas
+    </button>
+
+    <button class="filter-button" onclick="filterProducts('dupatta', this)">
+        🧣 Dupattas
+    </button>
+
+</div>
 
 
     <div class="products">
@@ -633,7 +699,8 @@
 
         <!-- PRODUCT 001 -->
 
-        <div class="product-card">
+        <div class="product-card"
+     data-category="ethnic kurta dupatta">
 
             <img
                 src="images/products/product-001/main.png"
@@ -663,7 +730,8 @@
         </div>
                 <!-- PRODUCT 002 -->
 
-        <div class="product-card">
+        <div class="product-card"
+     data-category="ethnic kurta dupatta">
 
             <img
                 src="images/products/product-002/main.png"
@@ -762,6 +830,33 @@ function searchProducts() {
         } else {
             product.style.display = "none";
         }
+    });
+}
+</script>
+<script>
+function filterProducts(category, button) {
+
+    let products = document.querySelectorAll(".product-card");
+    let buttons = document.querySelectorAll(".filter-button");
+
+    buttons.forEach(function(btn) {
+        btn.classList.remove("active");
+    });
+
+    button.classList.add("active");
+
+    products.forEach(function(product) {
+
+        let categories = product
+            .getAttribute("data-category")
+            .toLowerCase();
+
+        if (category === "all" || categories.includes(category)) {
+            product.classList.remove("hidden");
+        } else {
+            product.classList.add("hidden");
+        }
+
     });
 }
 </script>
