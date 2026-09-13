@@ -491,6 +491,55 @@
         font-size: 13px;
     }
 }
+    /* CATEGORY FILTERS */
+
+.category-filters {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0 auto 28px;
+    padding: 0 15px;
+}
+
+.filter-button {
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    background: white;
+    color: #222;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.filter-button:hover {
+    background: #f3f3f3;
+}
+
+.filter-button.active {
+    background: #222;
+    color: white;
+    border-color: #222;
+}
+
+.product-card.hidden {
+    display: none;
+}
+
+@media (max-width: 600px) {
+
+    .category-filters {
+        gap: 8px;
+    }
+
+    .filter-button {
+        padding: 9px 14px;
+        font-size: 13px;
+    }
+
+}
     </style>
     
 
@@ -670,6 +719,29 @@
         onkeyup="searchProducts()">
 </div>
     
+    <div class="category-filters">
+
+    <button class="filter-button active"
+        onclick="filterProducts('all', this)">
+        All
+    </button>
+
+    <button class="filter-button"
+        onclick="filterProducts('ethnic', this)">
+        👗 Ethnic Wear
+    </button>
+
+    <button class="filter-button"
+        onclick="filterProducts('kurta', this)">
+        👚 Kurtas
+    </button>
+
+    <button class="filter-button"
+        onclick="filterProducts('dupatta', this)">
+        🧣 Dupattas
+    </button>
+
+</div>
     <h2 class="section-title">
         Featured Product
     </h2>
@@ -814,24 +886,63 @@
 
 
 <script>
-function searchProducts() {
-    let searchText = document
-        .getElementById("productSearch")
-        .value
-        .toLowerCase();
+
+let selectedCategory = "all";
+
+function filterProducts(category, button) {
+
+    selectedCategory = category;
+
+    let buttons = document.querySelectorAll(".filter-button");
+
+    buttons.forEach(function(btn) {
+        btn.classList.remove("active");
+    });
+
+    button.classList.add("active");
+
+    applyFilters();
+}
+
+
+function applyFilters() {
+
+    let searchInput = document.getElementById("productSearch");
+
+    let searchText = searchInput
+        ? searchInput.value.toLowerCase().trim()
+        : "";
 
     let products = document.querySelectorAll(".product-card");
 
     products.forEach(function(product) {
+
         let productText = product.innerText.toLowerCase();
 
-        if (productText.includes(searchText)) {
-            product.style.display = "";
+        let categories =
+            (product.getAttribute("data-category") || "")
+            .toLowerCase();
+
+        let matchesSearch =
+            productText.includes(searchText);
+
+        let matchesCategory =
+            selectedCategory === "all" ||
+            categories.includes(selectedCategory);
+
+        if (matchesSearch && matchesCategory) {
+
+            product.classList.remove("hidden");
+
         } else {
-            product.style.display = "none";
+
+            product.classList.add("hidden");
+
         }
+
     });
 }
+
 </script>
 <script>
 function filterProducts(category, button) {
